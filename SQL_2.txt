@@ -1,0 +1,42 @@
+Add comments in file SQL_2.txt about whats it doing.
+Visualize, the how part of the DB structure based on query. Can be done by hand and attached as a picture.
+
+SELECT *
+FROM (
+SELECT
+ R.id AS receivable_id
+, R.contract_id
+, R.balance AS receivable_balance
+, R.amount AS receivable_amt
+, SUM(RI.amount) AS ri_amount
+, SUM(RI.balance) AS ri_balance
+, SUM(RIC.ric_amount) AS ric_amount
+
+FROM receivables AS R
+
+
+From table receivables
+
+
+LEFT JOIN receivable_items AS RI
+	ON RI.receivable_id = R.id
+
+LEFT JOIN (
+SELECT
+ receivable_item_id
+, -SUM(amount) AS ric_amount
+
+FROM receivable_item_changes
+
+GROUP BY 1
+) AS RIC
+	ON RIC.receivable_item_id = RI.id
+
+--WHERE R.contract_id = 1469
+
+GROUP BY 1,2,3,4
+) AS A
+
+WHERE COALESCE(receivable_amt,0) <> COALESCE(ri_amount,0)
+	OR COALESCE(receivable_amt,0) <> COALESCE(ric_amount,0) + COALESCE(receivable_balance,0)
+	OR COALESCE(ri_amount,0) <> COALESCE(ric_amount,0) + COALESCE(ri_balance,0)
