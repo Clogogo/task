@@ -1,4 +1,6 @@
 # Task
+please find all answers to the task.
+answers.docx contains answers for the db and debugging task.
 
 ## Requirements
 
